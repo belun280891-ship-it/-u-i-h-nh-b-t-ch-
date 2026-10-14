@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đuổi Hình Bắt Chữ - Thử Thách Trí Tuệ</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #6c5ce7, #a29bfe); min-height: 100vh; display: flex; justify-content: center; align-items: center; color: #2d3436; padding: 15px; }
+        .game-card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.25); width: 100%; max-width: 500px; text-align: center; }
+        h1 { color: #6c5ce7; margin-bottom: 5px; font-size: 24px; }
+        .stats { display: flex; justify-content: space-between; font-size: 15px; color: #636e72; margin-bottom: 15px; background: #f1f2f6; padding: 8px 15px; border-radius: 10px; font-weight: bold; }
+        .image-container { width: 100%; height: 220px; border-radius: 12px; overflow: hidden; margin-bottom: 15px; background: #dfe6e9; display: flex; justify-content: center; align-items: center; position: relative; }
+        .image-container img { width: 100%; height: 100%; object-fit: cover; }
+        .hint-box { font-style: italic; color: #d63031; margin-bottom: 15px; font-size: 14px; min-height: 20px; }
+        .word-slots { display: flex; justify-content: center; gap: 6px; margin-bottom: 15px; flex-wrap: wrap; }
+        .slot { width: 35px; height: 40px; border: 2px solid #b2bec3; border-radius: 6px; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: bold; background: #f8f9fa; color: #2d3436; text-transform: uppercase; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 12px; }
+        input[type="text"] { flex: 1; padding: 12px; border: 2px solid #dfe6e9; border-radius: 8px; font-size: 16px; outline: none; transition: 0.3s; text-transform: lowercase; }
+        input[type="text"]:focus { border-color: #6c5ce7; }
+        .btn { background: #6c5ce7; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn:hover { background: #5849be; }
+        .btn-hint { background: #ffeaa7; color: #d35400; margin-bottom: 12px; width: 100%; }
+        .btn-hint:hover { background: #ffeaa7; opacity: 0.8; }
+        .message { font-weight: bold; margin-top: 10px; min-height: 24px; font-size: 15px; }
+        .success { color: #00b894; }
+        .error { color: #d63031; }
+    </style>
+</head>
+<body>
+
+    <div class="game-card">
+        <h1>🧠 Đuổi Hình Bắt Chữ</h1>
+        <div class="stats">
+            <span>Câu: <span id="level">1</span>/5</span>
+            <span>Điểm: <span id="score">0</span></span>
+            <span>⏱️ <span id="timer">30</span>s</span>
+        </div>
+        
+        <div class="image-container" id="image-box">
+            <img id="quiz-img" src="" alt="Hình gợi ý câu đố">
+        </div>
+        
+        <div class="hint-box" id="hint-text">Gợi ý: Đang tải...</div>
+
+        <!-- Các ô trống hiển thị số chữ cái -->
+        <div class="word-slots" id="word-slots"></div>
+
+        <button class="btn btn-hint" onclick="giveHintLetter()">💡 Mở 1 chữ cái gợi ý (-5 điểm)</button>
+
+        <div class="input-group">
+            <input type="text" id="user-answer" placeholder="Nhập đáp án (ví dụ: xeom)..." onkeypress="checkEnter(event)">
+            <button class="btn" onclick="checkAnswer()">Gửi</button>
+        </div>
+
+        <div class="message" id="message"></div>
+    </div>
+
+    <script>
+        // Danh sách câu hỏi (Có thể thoải mái thêm bớt)
+        const quizList = [
+            { 
+                image: "https://images.unsplash.com/photo-1517849845537-4d257902454a?w=500&auto=format&fit=crop&q=60", 
+                answer: "chó mèo", 
+                hint: "Hai loài thú cưng quen thuộc nhất trong các gia đình." 
+            },
+            { 
+                image: "https://images.unsplash.com/photo-1543332164-6e82f355badc?w=500&auto=format&fit=crop&q=60", 
+                answer: "cá voi", 
+                hint: "Loài động vật có vú lớn nhất sống dưới đại dương." 
+            },
+            { 
+                image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500&auto=format&fit=crop&q=60", 
+                answer: "núi lửa", 
+                hint: "Nơi có dung nham nóng chảy phun trào từ lòng đất." 
+            },
+            { 
+                image: "https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?w=500&auto=format&fit=crop&q=60", 
+                answer: "hoa hồng", 
+                hint: "Biểu tượng của tình yêu, có màu đỏ và nhiều gai." 
+            },
+            { 
+                image: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=500&auto=format&fit=crop&q=60", 
+                answer: "rừng cây", 
+                hint: "Nơi tập trung rất nhiều cây xanh, lá rụng và động vật hoang dã." 
+            }
+        ];
+
+        let currentIdx = 0;
+        let score = 0;
+        let timeLeft = 30;
+        let timerInterval;
+
+        const imgEl = document.getElementById("quiz-img");
+        const hintEl = document.getElementById("hint-text");
+        const slotsEl = document.getElementById("word-slots");
+        const inputEl = document.getElementById("user-answer");
+        const msgEl = document.getElementById("message");
+        const scoreEl = document.getElementById("score");
+        const levelEl = document.getElementById("level");
+        const timerEl = document.getElementById("timer");
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 30;
+            timerEl.innerText = timeLeft;
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerEl.innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    msgEl.innerHTML = "⏰ Hết giờ mất rồi! Chuyển câu tiếp theo...";
+                    msgEl.className = "message error";
+                    currentIdx++;
+                    setTimeout(loadQuestion, 2000);
+                }
+            }, 1000);
+        }
+
+        function loadQuestion() {
+            if (currentIdx >= quizList.length) {
+                clearInterval(timerInterval);
+                document.querySelector(".game-card").innerHTML = `
+                    <h1>🎉 HOÀN THÀNH XUẤT SẮC! 🎉</h1>
+                    <p style="margin: 20px 0; font-size: 18px;">Bạn đã vượt qua toàn bộ thử thách.</p>
+                    <h3 style="color: #6c5ce7; font-size: 22px;">Tổng điểm của bạn: ${score} điểm</h3>
+                    <button class="btn" style="margin-top: 20px;" onclick="location.reload()">Chơi Lại Từ Đầu</button>
+                `;
+                return;
+            }
+
+            let q = quizList[currentIdx];
+            imgEl.src = q.image;
+            hintEl.innerText = "Gợi ý: " + q.hint;
+            inputEl.value = "";
+            msgEl.innerHTML = "";
+            levelEl.innerText = currentIdx + 1;
+            scoreEl.innerText = score;
+
+            // Tạo các ô vuông tương ứng với số chữ cái (bỏ qua khoảng trắng)
+            slotsEl.innerHTML = "";
+            let answerClean = q.answer.toLowerCase();
+            for (let char of answerClean) {
+                let slot = document.createElement("div");
+                slot.className = "slot";
+                if (char === " ") {
+                    slot.style.border = "none";
+                    slot.style.width = "15px";
+                }
+                slotsEl.appendChild(slot);
+            }
+
+            startTimer();
+        }
+
+        function checkAnswer() {
+            let userVal = inputEl.value.trim().toLowerCase();
+            let correctVal = quizList[currentIdx].answer.toLowerCase();
+
+            if (userVal === "") {
+                msgEl.innerHTML = "Vui lòng nhập đáp án!";
+                msgEl.className = "message error";
+                return;
+            }
+
+            if (userVal === correctVal) {
+                clearInterval(timerInterval);
+                score += 20;
+                scoreEl.innerText = score;
+                msgEl.innerHTML = "🎉 Chính xác! Quá đỉnh!";
+                msgEl.className = "message success";
+                currentIdx++;
+                setTimeout(loadQuestion, 1500);
+            } else {
+                msgEl.innerHTML = "❌ Sai rồi, suy nghĩ lại xem nhé!";
+                msgEl.className = "message error";
+            }
+        }
+
+        function giveHintLetter() {
+            if (score < 5) {
+                msgEl.innerHTML = "Bạn không đủ điểm để dùng gợi ý (Cần ít nhất 5 điểm)!";
+                msgEl.className = "message error";
+                return;
+            }
+            score -= 5;
+            scoreEl.innerText = score;
+
+            let correctVal = quizList[currentIdx].answer;
+            let slots = slotsEl.getElementsByClassName("slot");
+            // Mở chữ cái đầu tiên chưa được điền
+            for (let i = 0; i < slots.length; i++) {
+                if (slots[i].innerText === "" && correctVal[i] !== " ") {
+                    slots[i].innerText = correctVal[i].toUpperCase();
+                    break;
+                }
+            }
+            msgEl.innerHTML = "💡 Đã mở 1 chữ cái (Trừ 5 điểm)";
+            msgEl.className = "message";
+        }
+
+        function checkEnter(e) {
+            if (e.key === "Enter") {
+                checkAnswer();
+            }
+        }
+
+        // Chạy game lần đầu
+        loadQuestion();
+    </script>
+</body>
+</html>
