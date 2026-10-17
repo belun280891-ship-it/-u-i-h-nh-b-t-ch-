@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game đố vui - Menu</title>
+    <title>Game đố vui - Joke of the day</title>
     <style>
         * {
             margin: 0;
@@ -29,18 +29,19 @@
             backdrop-filter: blur(10px);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
             border: 1px solid rgba(255, 255, 255, 0.18);
+            width: 380px;
         }
 
         h1 {
-            font-size: 3rem;
-            margin-bottom: 10px;
+            font-size: 2.5rem;
+            margin-bottom: 5px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .subtitle {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-style: italic;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             color: #ffd700;
         }
 
@@ -61,6 +62,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            width: 100%;
         }
 
         .btn:hover {
@@ -72,20 +74,65 @@
         .btn:active {
             transform: translateY(0);
         }
+
+        .btn-back {
+            background-color: #6c757d;
+        }
+        .btn-back:hover {
+            background-color: #5a6268;
+        }
+
+        /* Ẩn các màn hình phụ bằng CSS */
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
 
     <div class="menu-container">
-        <h1>Game đố vui</h1>
-        <div class="subtitle">Joke of the day</div>
-        
-        <div class="menu-buttons">
-            <button class="btn" onclick="alert('Bắt đầu chơi!')">Bắt đầu chơi</button>
-            <button class="btn" onclick="alert('Xem hướng dẫn!')">Hướng dẫn</button>
-            <button class="btn" onclick="alert('Cài đặt game!')">Cài đặt</button>
+        <!-- MÀN HÌNH MENU CHÍNH -->
+        <div id="main-menu">
+            <h1>Game đố vui</h1>
+            <div class="subtitle">Joke of the day</div>
+            
+            <div class="menu-buttons">
+                <button class="btn" onclick="showModes()">Bắt đầu chơi</button>
+                <button class="btn" onclick="alert('Xem hướng dẫn!')">Hướng dẫn</button>
+                <button class="btn" onclick="alert('Cài đặt game!')">Cài đặt</button>
+            </div>
+        </div>
+
+        <!-- MÀN HÌNH CHỌN 3 CHẾ ĐỘ CHƠI -->
+        <div id="mode-menu" class="hidden">
+            <h1>Chọn chế độ</h1>
+            <div class="subtitle">Joke of the day</div>
+            
+            <div class="menu-buttons">
+                <button class="btn" onclick="startGame('EASY')">EASY (Dễ)</button>
+                <button class="btn" onclick="startGame('MID')">MID (Trung bình)</button>
+                <button class="btn" onclick="startGame('HARD')">HARD (Khó)</button>
+                <button class="btn btn-back" onclick="showMain()">Quay lại</button>
+            </div>
         </div>
     </div>
+
+    <script>
+        function showModes() {
+            document.getElementById('main-menu').classList.add('hidden');
+            document.getElementById('mode-menu').classList.remove('hidden');
+        }
+
+        function showMain() {
+            document.getElementById('mode-menu').classList.add('hidden');
+            document.getElementById('main-menu').classList.remove('hidden');
+        }
+
+        function startGame(mode) {
+            alert('Bạn đã chọn chế độ: ' + mode + '. Sẵn sàng bước vào câu hỏi nhé!');
+            // Sau này chúng ta sẽ viết tiếp code hiển thị câu hỏi tương ứng ở đây
+        }
+    </script>
 
 </body>
 </html>
