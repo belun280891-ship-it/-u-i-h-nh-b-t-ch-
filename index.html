@@ -212,8 +212,8 @@
             
             <div class="menu-buttons">
                 <button class="btn" onclick="showModes()">Bắt đầu chơi</button>
-                <button class="btn" onclick="alert('Trò chơi đố vui hack não! Mỗi câu có 30 phút thời gian và nút Skip.')">Hướng dẫn</button>
-                <button class="btn" onclick="alert('Phiên bản v1.6 - Thêm thời gian 30 phút và nút bỏ qua (Skip)!')">Cài đặt</button>
+                <button class="btn" onclick="alert('Trò chơi đố vui hack não! Mỗi câu có thời gian 30 giây và nút Skip.')">Hướng dẫn</button>
+                <button class="btn" onclick="alert('Phiên bản v1.7 - Chỉnh thời gian đếm ngược 30 giây mỗi câu!')">Cài đặt</button>
             </div>
         </div>
 
@@ -233,7 +233,7 @@
         <!-- MÀN HÌNH CHƠI GAME -->
         <div id="game-screen" class="hidden">
             <h1 id="mode-title" style="font-size: 1.5rem;">Chế độ</h1>
-            <div class="score-board" id="score-text">Câu: 1/4 | Điểm: 0 | ⏱️ 30:00</div>
+            <div class="score-board" id="score-text">Câu: 1/4 | Điểm: 0 | ⏱️ 30s</div>
             
             <div class="question-box" id="question-text">Nội dung câu hỏi ở đây...</div>
             
@@ -292,7 +292,7 @@
         let hintsLeft = 0;
         let isMusicPlaying = false;
         let timer = null;
-        let timeLeft = 1800; // 30 phút = 1800 giây
+        let timeLeft = 30; // Giới hạn 30 giây mỗi câu
 
         document.addEventListener('click', function() {
             let music = document.getElementById('bg-music');
@@ -370,15 +370,15 @@
                 hintBox.style.display = 'none';
                 hintBox.innerText = "";
 
-                // Bắt đầu đếm ngược 30 phút (1800 giây)
-                timeLeft = 1800;
+                // Bắt đầu đếm ngược 30 giây
+                timeLeft = 30;
                 updateTimerDisplay();
                 timer = setInterval(() => {
                     timeLeft--;
                     updateTimerDisplay();
                     if (timeLeft <= 0) {
                         clearInterval(timer);
-                        // Hết giờ tính là bỏ qua/sai câu này
+                        // Hết giờ tính là sai/hết giờ
                         historyLog.push({
                             question: qObj.q,
                             userAns: "(Hết giờ)",
@@ -395,10 +395,7 @@
         }
 
         function updateTimerDisplay() {
-            let minutes = Math.floor(timeLeft / 60);
-            let seconds = timeLeft % 60;
-            let timeString = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-            document.getElementById('score-text').innerText = `Câu: ${currentIndex + 1}/${currentQuestions.length} | Điểm: ${score} | ⏱️ ${timeString}`;
+            document.getElementById('score-text').innerText = `Câu: ${currentIndex + 1}/${currentQuestions.length} | Điểm: ${score} | ⏱️ ${timeLeft}s`;
         }
 
         function useHint() {
