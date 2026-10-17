@@ -13,23 +13,24 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            /* Tone nền chuyển sắc pastel dịu nhẹ (Xanh dương - Tím nhạt - Hồng phấn) */
+            background: linear-gradient(135deg, #a1c4fd, #c2e9fb, #fbc8d4);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: #fff;
+            color: #4a4a4a;
             padding: 20px;
         }
 
         .menu-container {
             text-align: center;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.65);
             padding: 30px 40px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 20px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px 0 rgba(100, 116, 139, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.8);
             width: 450px;
             position: relative;
         }
@@ -38,102 +39,113 @@
             position: absolute;
             top: 15px;
             right: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: #fff;
-            padding: 5px 10px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid #e2e8f0;
+            color: #64748b;
+            padding: 5px 12px;
             border-radius: 15px;
             cursor: pointer;
             font-size: 0.85rem;
-            transition: background 0.3s;
+            transition: all 0.3s;
         }
 
         .music-toggle:hover {
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 1);
+            color: #334155;
         }
 
         h1 {
             font-size: 2.2rem;
             margin-bottom: 5px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            color: #475569;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
         }
 
         .subtitle {
             font-size: 1.1rem;
             font-style: italic;
             margin-bottom: 20px;
-            color: #ffd700;
+            color: #94a3b8;
         }
 
         .menu-buttons {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
 
         .btn {
-            background-color: #ff6b6b;
+            background-color: #b48efa; /* Tím pastel dịu */
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 20px;
             font-size: 1.05rem;
             font-weight: bold;
             border-radius: 25px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 12px rgba(180, 142, 250, 0.3);
             width: 100%;
         }
 
         .btn:hover {
-            background-color: #ff5252;
+            background-color: #a275f4;
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 6px 16px rgba(180, 142, 250, 0.4);
         }
 
         .btn-hint {
-            background-color: #f6e58d;
-            color: #333;
+            background-color: #fef08a; /* Vàng kem pastel */
+            color: #713f12;
+            box-shadow: 0 4px 12px rgba(254, 240, 138, 0.4);
         }
         .btn-hint:hover {
-            background-color: #f9ca24;
+            background-color: #fde047;
         }
 
         .btn-skip {
-            background-color: #ffa502;
-            color: white;
+            background-color: #fdbca7; /* Hồng cam pastel */
+            color: #7c2d12;
+            box-shadow: 0 4px 12px rgba(253, 188, 167, 0.4);
         }
         .btn-skip:hover {
-            background-color: #ff7f00;
+            background-color: #fb923c;
+            color: white;
         }
 
         .btn-back {
-            background-color: #6c757d;
+            background-color: #cbd5e1; /* Xám trắng pastel */
+            color: #475569;
+            box-shadow: 0 4px 12px rgba(203, 213, 225, 0.3);
         }
         .btn-back:hover {
-            background-color: #5a6268;
+            background-color: #94a3b8;
+            color: white;
         }
 
         .question-box {
             font-size: 1.1rem;
-            margin-bottom: 12px;
-            line-height: 1.4;
+            margin-bottom: 15px;
+            line-height: 1.5;
             text-align: left;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 12px;
-            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.7);
+            color: #334155;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
         }
 
         .hint-box {
-            font-size: 0.9rem;
-            color: #ffeaa7;
-            margin-bottom: 12px;
+            font-size: 0.95rem;
+            color: #854d0e;
+            margin-bottom: 15px;
             font-style: italic;
             display: none;
             text-align: left;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 8px 12px;
-            border-radius: 8px;
+            background: rgba(254, 240, 138, 0.4);
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid #fef08a;
             transition: background-color 0.3s ease;
         }
 
@@ -148,45 +160,56 @@
 
         .shake-warning {
             animation: shake 0.4s ease;
-            background-color: rgba(255, 71, 87, 0.4) !important;
-            color: #ff9f43 !important;
+            background-color: rgba(248, 113, 113, 0.3) !important;
+            color: #991b1b !important;
+            border-color: #fca5a5 !important;
         }
 
         .answer-input {
             width: 100%;
-            padding: 9px 15px;
+            padding: 11px 15px;
             font-size: 1rem;
             border-radius: 20px;
-            border: 1px solid #ccc;
-            margin-bottom: 12px;
+            border: 1px solid #cbd5e1;
+            background: rgba(255, 255, 255, 0.9);
+            color: #334155;
+            margin-bottom: 15px;
             outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .answer-input:focus {
+            border-color: #b48efa;
         }
 
         .score-board {
-            font-size: 0.9rem;
-            margin-bottom: 12px;
-            color: #e2e8f0;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            color: #64748b;
+            font-weight: 500;
         }
 
         .result-summary {
             text-align: left;
             max-height: 230px;
             overflow-y: auto;
-            background: rgba(0, 0, 0, 0.25);
+            background: rgba(255, 255, 255, 0.6);
             padding: 15px;
-            border-radius: 10px;
+            border-radius: 12px;
             margin-bottom: 15px;
             font-size: 0.95rem;
+            border: 1px solid rgba(226, 232, 240, 0.8);
         }
 
         .result-item {
             margin-bottom: 10px;
             padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+            color: #334155;
         }
 
-        .correct-text { color: #55efc4; font-weight: bold; }
-        .wrong-text { color: #ff7675; font-weight: bold; }
+        .correct-text { color: #10b981; font-weight: bold; } /* Xanh lá pastel đậm vừa */
+        .wrong-text { color: #ef4444; font-weight: bold; }   /* Đỏ pastel dịu */
 
         .hidden {
             display: none;
@@ -212,8 +235,8 @@
             
             <div class="menu-buttons">
                 <button class="btn" onclick="showModes()">Bắt đầu chơi</button>
-                <button class="btn" onclick="alert('Trò chơi đố vui hack não! Mỗi câu có thời gian 30 giây và nút Skip.')">Hướng dẫn</button>
-                <button class="btn" onclick="alert('Phiên bản v1.7 - Chỉnh thời gian đếm ngược 30 giây mỗi câu!')">Cài đặt</button>
+                <button class="btn" onclick="alert('Trò chơi đố vui hack não với giao diện Pastel dịu mắt!')">Hướng dẫn</button>
+                <button class="btn" onclick="alert('Phiên bản v1.8 - Giao diện Tone Pastel Xanh, Tím, Hồng, Trắng, Vàng nhẹ nhàng!')">Cài đặt</button>
             </div>
         </div>
 
@@ -226,7 +249,7 @@
                 <button class="btn" onclick="startGame('EASY')">EASY (Dễ)</button>
                 <button class="btn" onclick="startGame('MID')">MID (Trung bình)</button>
                 <button class="btn" onclick="startGame('HARD')">HARD (Khó)</button>
-                <button class="btn btn-back" onclick="showMain()">Quay lại</button>
+                <button class="btn btn-back" onclick="showModes()">Quay lại</button>
             </div>
         </div>
 
@@ -239,12 +262,12 @@
             
             <div class="hint-box" id="hint-text">💡 Gợi ý: ...</div>
             
-            <input type="text" id="user-answer" class="answer-input" placeholder="Nhập đáp án của bạn...">
+            <input type="text" id="user-answer" class="answer-input" placeholder="Nhập câu trả lời...">
             
             <div class="menu-buttons">
                 <button class="btn" onclick="checkAnswer()">Trả lời</button>
                 <button class="btn btn-hint" id="hint-btn" onclick="useHint()">Xem gợi ý</button>
-                <button class="btn btn-skip" onclick="skipQuestion()">Bỏ qua (Skip)</button>
+                <button class="btn btn-skip" onclick="skipQuestion()">Skip (Bỏ qua)</button>
                 <button class="btn btn-back" onclick="showModes()">Chọn chế độ khác</button>
             </div>
         </div>
@@ -292,7 +315,7 @@
         let hintsLeft = 0;
         let isMusicPlaying = false;
         let timer = null;
-        let timeLeft = 30; // Giới hạn 30 giây mỗi câu
+        let timeLeft = 30;
 
         document.addEventListener('click', function() {
             let music = document.getElementById('bg-music');
@@ -370,7 +393,6 @@
                 hintBox.style.display = 'none';
                 hintBox.innerText = "";
 
-                // Bắt đầu đếm ngược 30 giây
                 timeLeft = 30;
                 updateTimerDisplay();
                 timer = setInterval(() => {
@@ -378,7 +400,6 @@
                     updateTimerDisplay();
                     if (timeLeft <= 0) {
                         clearInterval(timer);
-                        // Hết giờ tính là sai/hết giờ
                         historyLog.push({
                             question: qObj.q,
                             userAns: "(Hết giờ)",
@@ -483,7 +504,7 @@
                     listHTML += `<div class="result-item">
                         <strong>C. ${index + 1}:</strong> ${item.question}<br>
                         - Đáp án của bạn: <span class="wrong-text">${item.userAns} (Sai)</span><br>
-                        - Đáp án chuẩn: <span style="color: #ffd700;">${item.standardAns}</span>
+                        - Đáp án chuẩn: <span style="color: #d97706;">${item.standardAns}</span>
                     </div>`;
                 }
             });
