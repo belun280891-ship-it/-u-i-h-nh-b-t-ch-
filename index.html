@@ -34,7 +34,6 @@
             position: relative;
         }
 
-        /* Nút bật/tắt nhạc nền góc trên */
         .music-toggle {
             position: absolute;
             top: 15px;
@@ -69,15 +68,15 @@
         .menu-buttons {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .btn {
             background-color: #ff6b6b;
             color: white;
             border: none;
-            padding: 12px 20px;
-            font-size: 1.1rem;
+            padding: 10px 20px;
+            font-size: 1.05rem;
             font-weight: bold;
             border-radius: 25px;
             cursor: pointer;
@@ -88,7 +87,7 @@
 
         .btn:hover {
             background-color: #ff5252;
-            transform: translateY(-3px);
+            transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
 
@@ -100,6 +99,14 @@
             background-color: #f9ca24;
         }
 
+        .btn-skip {
+            background-color: #ffa502;
+            color: white;
+        }
+        .btn-skip:hover {
+            background-color: #ff7f00;
+        }
+
         .btn-back {
             background-color: #6c757d;
         }
@@ -108,19 +115,19 @@
         }
 
         .question-box {
-            font-size: 1.15rem;
-            margin-bottom: 15px;
-            line-height: 1.5;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            line-height: 1.4;
             text-align: left;
             background: rgba(0, 0, 0, 0.2);
-            padding: 15px;
+            padding: 12px;
             border-radius: 10px;
         }
 
         .hint-box {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: #ffeaa7;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             font-style: italic;
             display: none;
             text-align: left;
@@ -147,23 +154,23 @@
 
         .answer-input {
             width: 100%;
-            padding: 10px 15px;
+            padding: 9px 15px;
             font-size: 1rem;
             border-radius: 20px;
             border: 1px solid #ccc;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             outline: none;
         }
 
         .score-board {
-            font-size: 0.95rem;
-            margin-bottom: 15px;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
             color: #e2e8f0;
         }
 
         .result-summary {
             text-align: left;
-            max-height: 250px;
+            max-height: 230px;
             overflow-y: auto;
             background: rgba(0, 0, 0, 0.25);
             padding: 15px;
@@ -188,14 +195,14 @@
 </head>
 <body>
 
-    <!-- Thẻ âm thanh chạy nhạc nền tự động lặp lại -->
+    <!-- Thẻ âm thanh nhạc nền -->
     <audio id="bg-music" loop>
         <source src="Themesound.mp4" type="audio/mp4">
         Trình duyệt của bạn không hỗ trợ thẻ audio.
     </audio>
 
     <div class="menu-container">
-        <!-- Nút điều khiển nhạc -->
+        <!-- Nút bật/tắt nhạc -->
         <button class="music-toggle" id="music-btn" onclick="toggleMusic()">🔊 Nhạc: Bật</button>
 
         <!-- MÀN HÌNH MENU CHÍNH -->
@@ -205,8 +212,8 @@
             
             <div class="menu-buttons">
                 <button class="btn" onclick="showModes()">Bắt đầu chơi</button>
-                <button class="btn" onclick="alert('Trò chơi đố vui hack não! Có nhạc nền và giới hạn gợi ý thông minh.')">Hướng dẫn</button>
-                <button class="btn" onclick="alert('Phiên bản v1.5 - Tích hợp nhạc nền Themesound.mp4!')">Cài đặt</button>
+                <button class="btn" onclick="alert('Trò chơi đố vui hack não! Mỗi câu có 30 phút thời gian và nút Skip.')">Hướng dẫn</button>
+                <button class="btn" onclick="alert('Phiên bản v1.6 - Thêm thời gian 30 phút và nút bỏ qua (Skip)!')">Cài đặt</button>
             </div>
         </div>
 
@@ -225,8 +232,8 @@
 
         <!-- MÀN HÌNH CHƠI GAME -->
         <div id="game-screen" class="hidden">
-            <h1 id="mode-title" style="font-size: 1.6rem;">Chế độ</h1>
-            <div class="score-board" id="score-text">Câu: 1/4 | Điểm: 0 | Gợi ý còn lại: 2</div>
+            <h1 id="mode-title" style="font-size: 1.5rem;">Chế độ</h1>
+            <div class="score-board" id="score-text">Câu: 1/4 | Điểm: 0 | ⏱️ 30:00</div>
             
             <div class="question-box" id="question-text">Nội dung câu hỏi ở đây...</div>
             
@@ -237,6 +244,7 @@
             <div class="menu-buttons">
                 <button class="btn" onclick="checkAnswer()">Trả lời</button>
                 <button class="btn btn-hint" id="hint-btn" onclick="useHint()">Xem gợi ý</button>
+                <button class="btn btn-skip" onclick="skipQuestion()">Bỏ qua (Skip)</button>
                 <button class="btn btn-back" onclick="showModes()">Chọn chế độ khác</button>
             </div>
         </div>
@@ -283,8 +291,9 @@
         let historyLog = [];
         let hintsLeft = 0;
         let isMusicPlaying = false;
+        let timer = null;
+        let timeLeft = 1800; // 30 phút = 1800 giây
 
-        // Tự động phát nhạc khi người chơi tương tác lần đầu trên trang
         document.addEventListener('click', function() {
             let music = document.getElementById('bg-music');
             if (!isMusicPlaying && music.paused) {
@@ -319,6 +328,7 @@
         }
 
         function showModes() {
+            clearInterval(timer);
             document.getElementById('main-menu').classList.add('hidden');
             document.getElementById('game-screen').classList.add('hidden');
             document.getElementById('summary-screen').classList.add('hidden');
@@ -326,6 +336,7 @@
         }
 
         function showMain() {
+            clearInterval(timer);
             document.getElementById('mode-menu').classList.add('hidden');
             document.getElementById('game-screen').classList.add('hidden');
             document.getElementById('summary-screen').classList.add('hidden');
@@ -349,18 +360,45 @@
         }
 
         function loadQuestion() {
+            clearInterval(timer);
             if (currentIndex < currentQuestions.length) {
                 let qObj = currentQuestions[currentIndex];
                 document.getElementById('question-text').innerText = (currentIndex + 1) + ". " + qObj.q;
-                document.getElementById('score-text').innerText = `Câu: ${currentIndex + 1}/${currentQuestions.length} | Điểm: ${score} | Gợi ý còn lại: ${hintsLeft}`;
                 document.getElementById('user-answer').value = '';
                 
                 let hintBox = document.getElementById('hint-text');
                 hintBox.style.display = 'none';
                 hintBox.innerText = "";
+
+                // Bắt đầu đếm ngược 30 phút (1800 giây)
+                timeLeft = 1800;
+                updateTimerDisplay();
+                timer = setInterval(() => {
+                    timeLeft--;
+                    updateTimerDisplay();
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                        // Hết giờ tính là bỏ qua/sai câu này
+                        historyLog.push({
+                            question: qObj.q,
+                            userAns: "(Hết giờ)",
+                            correct: false,
+                            standardAns: qObj.a[0]
+                        });
+                        currentIndex++;
+                        loadQuestion();
+                    }
+                }, 1000);
             } else {
                 showSummary();
             }
+        }
+
+        function updateTimerDisplay() {
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+            let timeString = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            document.getElementById('score-text').innerText = `Câu: ${currentIndex + 1}/${currentQuestions.length} | Điểm: ${score} | ⏱️ ${timeString}`;
         }
 
         function useHint() {
@@ -372,7 +410,6 @@
                 let hintContent = qObj.hints.join("<br>💡 ");
                 hintBox.style.display = 'block';
                 hintBox.innerHTML = "💡 " + hintContent;
-                document.getElementById('score-text').innerText = `Câu: ${currentIndex + 1}/${currentQuestions.length} | Điểm: ${score} | Gợi ý còn lại: ${hintsLeft}`;
             } else {
                 hintBox.style.display = 'block';
                 hintBox.innerHTML = "⚠️ Bạn đã dùng hết lượt gợi ý trong màn này rồi!";
@@ -384,6 +421,18 @@
                     hintBox.innerHTML = "";
                 }, 3000);
             }
+        }
+
+        function skipQuestion() {
+            let qObj = currentQuestions[currentIndex];
+            historyLog.push({
+                question: qObj.q,
+                userAns: "(Đã bỏ qua)",
+                correct: false,
+                standardAns: qObj.a[0]
+            });
+            currentIndex++;
+            loadQuestion();
         }
 
         function checkAnswer() {
@@ -421,6 +470,7 @@
         }
 
         function showSummary() {
+            clearInterval(timer);
             document.getElementById('game-screen').classList.add('hidden');
             document.getElementById('summary-screen').classList.remove('hidden');
             document.getElementById('final-score-title').innerText = `Tổng điểm: ${score} / ${currentQuestions.length}`;
