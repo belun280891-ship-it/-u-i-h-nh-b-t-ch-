@@ -14,22 +14,23 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea, #764ba2);
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             color: #fff;
+            padding: 20px;
         }
 
         .menu-container {
             text-align: center;
             background: rgba(255, 255, 255, 0.1);
-            padding: 40px 40px;
+            padding: 30px 40px;
             border-radius: 15px;
             backdrop-filter: blur(10px);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
             border: 1px solid rgba(255, 255, 255, 0.18);
-            width: 420px;
+            width: 450px;
         }
 
         h1 {
@@ -41,14 +42,14 @@
         .subtitle {
             font-size: 1.1rem;
             font-style: italic;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             color: #ffd700;
         }
 
         .menu-buttons {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
         }
 
         .btn {
@@ -71,6 +72,14 @@
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
 
+        .btn-hint {
+            background-color: #f6e58d;
+            color: #333;
+        }
+        .btn-hint:hover {
+            background-color: #f9ca24;
+        }
+
         .btn-back {
             background-color: #6c757d;
         }
@@ -78,15 +87,26 @@
             background-color: #5a6268;
         }
 
-        /* Phần khung câu hỏi */
         .question-box {
             font-size: 1.15rem;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             line-height: 1.5;
             text-align: left;
             background: rgba(0, 0, 0, 0.2);
             padding: 15px;
             border-radius: 10px;
+        }
+
+        .hint-box {
+            font-size: 0.95rem;
+            color: #ffeaa7;
+            margin-bottom: 15px;
+            font-style: italic;
+            display: none;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 12px;
+            border-radius: 8px;
         }
 
         .answer-input {
@@ -105,6 +125,26 @@
             color: #e2e8f0;
         }
 
+        .result-summary {
+            text-align: left;
+            max-height: 250px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .result-item {
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .correct-text { color: #55efc4; font-weight: bold; }
+        .wrong-text { color: #ff7675; font-weight: bold; }
+
         .hidden {
             display: none;
         }
@@ -120,8 +160,8 @@
             
             <div class="menu-buttons">
                 <button class="btn" onclick="showModes()">Bắt đầu chơi</button>
-                <button class="btn" onclick="alert('Trò chơi đố vui mẹo dân gian và hack não cực kỳ thú vị!')">Hướng dẫn</button>
-                <button class="btn" onclick="alert('Phiên bản v1.0 - Phát triển bởi bạn và AI!')">Cài đặt</button>
+                <button class="btn" onclick="alert('Trò chơi đố vui mẹo dân gian và hack não! Trả lời hết sẽ có bảng tổng kết đúng/sai.')">Hướng dẫn</button>
+                <button class="btn" onclick="alert('Phiên bản v1.1 - Cập nhật gợi ý & tổng kết kết quả!')">Cài đặt</button>
             </div>
         </div>
 
@@ -140,39 +180,56 @@
 
         <!-- MÀN HÌNH CHƠI GAME -->
         <div id="game-screen" class="hidden">
-            <h1 id="mode-title" style="font-size: 1.8rem;">Chế độ</h1>
+            <h1 id="mode-title" style="font-size: 1.6rem;">Chế độ</h1>
             <div class="score-board" id="score-text">Câu: 1/4 | Điểm: 0</div>
             
             <div class="question-box" id="question-text">Nội dung câu hỏi ở đây...</div>
+            
+            <div class="hint-box" id="hint-text">💡 Gợi ý: ...</div>
             
             <input type="text" id="user-answer" class="answer-input" placeholder="Nhập đáp án của bạn...">
             
             <div class="menu-buttons">
                 <button class="btn" onclick="checkAnswer()">Trả lời</button>
+                <button class="btn btn-hint" onclick="toggleHint()">Xem gợi ý</button>
                 <button class="btn btn-back" onclick="showModes()">Chọn chế độ khác</button>
+            </div>
+        </div>
+
+        <!-- MÀN HÌNH TỔNG KẾT KẾT QUẢ -->
+        <div id="summary-screen" class="hidden">
+            <h1 style="font-size: 1.8rem;">Kết quả tổng kết</h1>
+            <div class="subtitle" id="final-score-title">Đạt điểm: 0/0</div>
+            
+            <div class="result-summary" id="result-list">
+                <!-- Danh sách đúng sai sẽ nhét vào đây -->
+            </div>
+            
+            <div class="menu-buttons">
+                <button class="btn" onclick="showModes()">Chơi lại màn khác</button>
+                <button class="btn btn-back" onclick="showMain()">Về menu chính</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Dữ liệu câu hỏi theo từng mức độ
         const questionsData = {
             'EASY': [
-                { q: "Cái gì có cổ nhưng không có đầu?", a: ["cái áo", "ao"] },
-                { q: "Cái gì đi mà không bao giờ mỏi chân?", a: ["đồng hồ", "dong ho"] },
-                { q: "Cái gì càng giặt càng bẩn?", a: ["nước", "nuoc"] },
-                { q: "Cái gì có răng nhưng không cắn được?", a: ["cái lược", "cai luoc", "luoc"] }
+                { q: "Cái gì có cổ nhưng không có đầu?", a: ["cái áo", "ao"], hint: "Mặc vào người khi trời lạnh hoặc đi chơi." },
+                { q: "Cái gì đi mà không bao giờ mỏi chân?", a: ["đồng hồ", "dong ho"], hint: "Nó có các kim chỉ giờ, phút, giây." },
+                { q: "Cái gì càng giặt càng bẩn?", a: ["nước", "nuoc"], hint: "Chất lỏng dùng để tắm giặt hàng ngày." },
+                { q: "Cái gì có răng nhưng không cắn được?", a: ["cái lược", "cai luoc", "luoc"], hint: "Dùng để chải tóc mỗi sáng." }
             ],
             'MID': [
-                { q: "Con gì có cánh có đuôi không có lông mà lại bay rất cao?", a: ["con diều", "diều", "con dieu", "dieu"] },
-                { q: "Con gì càng lớn càng bé?", a: ["con cua", "cua"] },
-                { q: "Cá biết nấu ăn gọi là gì?", a: ["cá chef", "ca chef", "chef"] },
-                { q: "Con gì đập thì sống, không đập thì chết?", a: ["con tim", "tim", "trái tim", "trai tim"] }
+                { q: "Con gì có cánh có đuôi không có lông mà lại bay rất cao?", a: ["con diều", "diều", "con dieu", "dieu"], hint: "Trẻ con thường thả chơi ngoài bãi cỏ vào mùa gió." },
+                { q: "Con gì càng lớn càng bé?", a: ["con cua", "cua"], hint: "Khi luộc chín nó chuyển sang màu đỏ." },
+                { q: "Cá biết nấu ăn gọi là gì?", a: ["cá chef", "ca chef", "chef"], hint: "Kết hợp giữa từ 'Cá' và tiếng Anh chỉ đầu bếp." },
+                { q: "Con gì đập thì sống, không đập thì chết?", a: ["con tim", "tim", "trái tim", "trai tim"], hint: "Nằm ở lồng ngực bên trái của bạn." }
             ],
             'HARD': [
-                { q: "Một tàu điện chạy về hướng Nam, gió thổi từ Đông sang Tây. Vậy khói của tàu chạy hướng nào?", a: ["không có khói", "khong co khoi", "tau khong co khoi", "tàu không có khói"] },
-                { q: "Hướng nào có nhiều đàn ông?", a: ["đông nam", "dong nam"] },
-                { q: "Lịch nào dài nhất?", a: ["lịch sử", "lich su"] }
+                { q: "Một tàu điện chạy về hướng Nam, gió thổi từ Đông sang Tây. Vậy khói của tàu chạy hướng nào?", a: ["không có khói", "khong co khoi", "tau khong co khoi", "tàu không có khói"], hint: "Hãy nghĩ kỹ xem loại phương tiện này dùng nhiên liệu gì." },
+                { q: "Hướng nào có nhiều đàn ông?", a: ["đông nam", "dong nam"], hint: "Một hướng gió thường gặp trong khí tượng (ghép từ Đông và Nam)." },
+                { q: "Lịch nào dài nhất?", a: ["lịch sử", "lich su"], hint: "Nó ghi lại toàn bộ sự kiện từ ngàn xưa đến nay của loài người." }
             ]
         };
 
@@ -180,15 +237,19 @@
         let currentIndex = 0;
         let score = 0;
         let currentQuestions = [];
+        let historyLog = []; // Lưu lại lịch sử đúng sai
 
         function showModes() {
             document.getElementById('main-menu').classList.add('hidden');
             document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('summary-screen').classList.add('hidden');
             document.getElementById('mode-menu').classList.remove('hidden');
         }
 
         function showMain() {
             document.getElementById('mode-menu').classList.add('hidden');
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('summary-screen').classList.add('hidden');
             document.getElementById('main-menu').classList.remove('hidden');
         }
 
@@ -196,9 +257,11 @@
             currentMode = mode;
             currentIndex = 0;
             score = 0;
+            historyLog = [];
             currentQuestions = questionsData[mode];
 
             document.getElementById('mode-menu').classList.add('hidden');
+            document.getElementById('summary-screen').classList.add('hidden');
             document.getElementById('game-screen').classList.remove('hidden');
             document.getElementById('mode-title').innerText = 'Chế độ: ' + mode;
 
@@ -211,36 +274,84 @@
                 document.getElementById('question-text').innerText = (currentIndex + 1) + ". " + qObj.q;
                 document.getElementById('score-text').innerText = `Câu: ${currentIndex + 1}/${currentQuestions.length} | Điểm: ${score}`;
                 document.getElementById('user-answer').value = '';
+                
+                // Ẩn gợi ý khi sang câu mới
+                let hintBox = document.getElementById('hint-text');
+                hintBox.style.display = 'none';
+                hintBox.innerText = "💡 Gợi ý: " + qObj.hint;
             } else {
-                alert(`🎉 Chúc mừng bạn đã hoàn thành màn chơi ${currentMode}!\nTổng điểm của bạn: ${score}/${currentQuestions.length}`);
-                showModes();
+                showSummary();
+            }
+        }
+
+        function toggleHint() {
+            let hintBox = document.getElementById('hint-text');
+            if (hintBox.style.display === 'none' || hintBox.style.display === '') {
+                hintBox.style.display = 'block';
+            } else {
+                hintBox.style.display = 'none';
             }
         }
 
         function checkAnswer() {
             let userAns = document.getElementById('user-answer').value.trim().toLowerCase();
-            let correctList = currentQuestions[currentIndex].a;
+            let qObj = currentQuestions[currentIndex];
+            let correctList = qObj.a;
 
             if (userAns === "") {
                 alert("Vui lòng nhập đáp án trước khi trả lời nhé!");
                 return;
             }
 
-            // Kiểm tra xem đáp án người dùng nhập có khớp với từ khóa nào không
             let isCorrect = correctList.some(ans => userAns.includes(ans));
 
             if (isCorrect) {
-                alert(" chính xác! 🎯");
+                alert("🎯 Chính xác!");
                 score++;
+                historyLog.push({
+                    question: qObj.q,
+                    userAns: userAns,
+                    correct: true,
+                    standardAns: correctList[0]
+                });
             } else {
                 alert(`❌ Sai rồi! Đáp án đúng là: "${correctList[0]}"`);
+                historyLog.push({
+                    question: qObj.q,
+                    userAns: userAns,
+                    correct: false,
+                    standardAns: correctList[0]
+                });
             }
 
             currentIndex++;
             loadQuestion();
         }
 
-        // Cho phép ấn Enter để trả lời nhanh
+        function showSummary() {
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('summary-screen').classList.remove('hidden');
+            document.getElementById('final-score-title').innerText = `Tổng điểm: ${score} / ${currentQuestions.length}`;
+
+            let listHTML = '';
+            historyLog.forEach((item, index) => {
+                if (item.correct) {
+                    listHTML += `<div class="result-item">
+                        <strong>C. ${index + 1}:</strong> ${item.question}<br>
+                        - Trả lời: <span class="correct-text">${item.userAns} (Đúng)</span>
+                    </div>`;
+                } else {
+                    listHTML += `<div class="result-item">
+                        <strong>C. ${index + 1}:</strong> ${item.question}<br>
+                        - Bạn trả lời: <span class="wrong-text">${item.userAns} (Sai)</span><br>
+                        - Đáp án chuẩn: <span style="color: #ffd700;">${item.standardAns}</span>
+                    </div>`;
+                }
+            });
+
+            document.getElementById('result-list').innerHTML = listHTML;
+        }
+
         document.getElementById('user-answer').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 checkAnswer();
