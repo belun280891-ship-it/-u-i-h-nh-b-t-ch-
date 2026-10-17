@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game đố vui - Joke of the day</title>
+    <!-- Thư viện pháo hoa giấy (Canvas Confetti) -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -13,7 +15,6 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            /* Tone nền tím pastel tối, trầm, ấm và cực kỳ dịu mắt */
             background: linear-gradient(135deg, #2d2342, #3b2e59, #4f3a65);
             min-height: 100vh;
             display: flex;
@@ -33,6 +34,7 @@
             border: 1px solid rgba(255, 255, 255, 0.12);
             width: 450px;
             position: relative;
+            overflow: hidden;
         }
 
         .music-toggle {
@@ -65,7 +67,7 @@
             font-size: 1.1rem;
             font-style: italic;
             margin-bottom: 20px;
-            color: #fbbf24; /* Vàng pastel dịu */
+            color: #fbbf24;
         }
 
         .menu-buttons {
@@ -75,7 +77,7 @@
         }
 
         .btn {
-            background-color: #8b5cf6; /* Tím pastel trung tính */
+            background-color: #8b5cf6;
             color: white;
             border: none;
             padding: 12px 20px;
@@ -95,7 +97,7 @@
         }
 
         .btn-hint {
-            background-color: #f59e0b; /* Vàng cam pastel ấm */
+            background-color: #f59e0b;
             color: #ffffff;
             box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
         }
@@ -104,7 +106,7 @@
         }
 
         .btn-skip {
-            background-color: #f43f5e; /* Hồng đào pastel đầm */
+            background-color: #f43f5e;
             color: white;
             box-shadow: 0 4px 12px rgba(244, 63, 94, 0.25);
         }
@@ -113,7 +115,7 @@
         }
 
         .btn-back {
-            background-color: #38bdf8; /* Xanh dương pastel dịu */
+            background-color: #38bdf8;
             color: #0f172a;
             box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
         }
@@ -145,7 +147,6 @@
             padding: 10px 12px;
             border-radius: 10px;
             border: 1px solid rgba(245, 158, 11, 0.3);
-            transition: background-color 0.3s ease;
         }
 
         @keyframes shake {
@@ -192,6 +193,22 @@
             font-weight: 500;
         }
 
+        /* Hiệu ứng pop-up biểu tượng phản hồi (mặt buồn hoặc pháo hoa) */
+        #feedback-popup {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 5rem;
+            z-index: 10;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+        }
+
+        #feedback-popup.show {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
         .result-summary {
             text-align: left;
             max-height: 230px;
@@ -211,8 +228,8 @@
             color: #e2e8f0;
         }
 
-        .correct-text { color: #34d399; font-weight: bold; } /* Xanh lá pastel dịu */
-        .wrong-text { color: #f87171; font-weight: bold; }   /* Đỏ hồng pastel dịu */
+        .correct-text { color: #34d399; font-weight: bold; }
+        .wrong-text { color: #f87171; font-weight: bold; }
 
         .hidden {
             display: none;
@@ -228,6 +245,9 @@
     </audio>
 
     <div class="menu-container">
+        <!-- Nơi hiển thị icon phản hồi (Mặt buồn / Pháo hoa) -->
+        <div id="feedback-popup">😢</div>
+
         <!-- Nút bật/tắt nhạc -->
         <button class="music-toggle" id="music-btn" onclick="toggleMusic()">🔊 Nhạc: Bật</button>
 
@@ -238,8 +258,8 @@
             
             <div class="menu-buttons">
                 <button class="btn" onclick="showModes()">Bắt đầu chơi</button>
-                <button class="btn btn-hint" onclick="alert('Trò chơi đố vui hack não với giao diện Tím Pastel dịu mắt, chống chói!')">Hướng dẫn</button>
-                <button class="btn btn-back" onclick="alert('Phiên bản v1.9 - Tone màu Tím tối pastel nhẹ nhàng, phối nút xanh, tím, vàng, hồng!')">Cài đặt</button>
+                <button class="btn btn-hint" onclick="alert('Trả lời đúng có chuông & pháo hoa, trả lời sai có tiếng tẹt tẹt & mặt buồn!')">Hướng dẫn</button>
+                <button class="btn btn-back" onclick="alert('Phiên bản v2.0 - Tích hợp âm thanh chuông, pháo hoa và icon trực quan!')">Cài đặt</button>
             </div>
         </div>
 
@@ -319,6 +339,68 @@
         let isMusicPlaying = false;
         let timer = null;
         let timeLeft = 30;
+
+        // Trình tạo âm thanh hiệu ứng bằng code (Web Audio API)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playCorrectSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            let now = audioCtx.currentTime;
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(523.25, now); // Nốt C5
+            osc.frequency.setValueAtTime(659.25, now + 0.1); // Nốt E5
+            osc.frequency.setValueAtTime(783.99, now + 0.2); // Nốt G5
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.6);
+        }
+
+        function playWrongSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            let now = audioCtx.currentTime;
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(150, now);
+            osc.frequency.setValueAtTime(110, now + 0.15);
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.4);
+        }
+
+        // Hiệu ứng pháo hoa giấy chúc mừng
+        function triggerConfetti() {
+            confetti({
+                particleCount: 80,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
+
+        // Hiển thị icon phản hồi (Mặt buồn / Pháo hoa)
+        function showFeedback(type) {
+            let popup = document.getElementById('feedback-popup');
+            if (type === 'sad') {
+                popup.innerText = "😢";
+                playWrongSound();
+            } else if (type === 'happy') {
+                popup.innerText = "🎉";
+                playCorrectSound();
+                triggerConfetti();
+            }
+            popup.classList.add('show');
+            setTimeout(() => {
+                popup.classList.remove('show');
+            }, 800);
+        }
 
         document.addEventListener('click', function() {
             let music = document.getElementById('bg-music');
@@ -403,6 +485,7 @@
                     updateTimerDisplay();
                     if (timeLeft <= 0) {
                         clearInterval(timer);
+                        showFeedback('sad');
                         historyLog.push({
                             question: qObj.q,
                             userAns: "(Hết giờ)",
@@ -410,7 +493,7 @@
                             standardAns: qObj.a[0]
                         });
                         currentIndex++;
-                        loadQuestion();
+                        setTimeout(loadQuestion, 900);
                     }
                 }, 1000);
             } else {
@@ -446,6 +529,7 @@
 
         function skipQuestion() {
             let qObj = currentQuestions[currentIndex];
+            showFeedback('sad');
             historyLog.push({
                 question: qObj.q,
                 userAns: "(Đã bỏ qua)",
@@ -453,7 +537,7 @@
                 standardAns: qObj.a[0]
             });
             currentIndex++;
-            loadQuestion();
+            setTimeout(loadQuestion, 900);
         }
 
         function checkAnswer() {
@@ -471,6 +555,7 @@
 
             if (isCorrect) {
                 score++;
+                showFeedback('happy');
                 historyLog.push({
                     question: qObj.q,
                     userAns: userAns,
@@ -478,6 +563,7 @@
                     standardAns: correctList[0]
                 });
             } else {
+                showFeedback('sad');
                 historyLog.push({
                     question: qObj.q,
                     userAns: userAns,
@@ -487,7 +573,8 @@
             }
 
             currentIndex++;
-            loadQuestion();
+            // Đợi hiệu ứng âm thanh/icon chạy xong 0.9 giây rồi chuyển câu
+            setTimeout(loadQuestion, 900);
         }
 
         function showSummary() {
