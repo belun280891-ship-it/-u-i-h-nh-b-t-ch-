@@ -107,6 +107,23 @@
             background: rgba(255, 255, 255, 0.05);
             padding: 8px 12px;
             border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Hiệu ứng rung ngang và đổi màu đỏ khi hết lượt gợi ý */
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-8px); }
+            80% { transform: translateX(8px); }
+            100% { transform: translateX(0); }
+        }
+
+        .shake-warning {
+            animation: shake 0.4s ease;
+            background-color: rgba(255, 71, 87, 0.4) !important;
+            color: #ff9f43 !important;
         }
 
         .answer-input {
@@ -160,8 +177,8 @@
             
             <div class="menu-buttons">
                 <button class="btn" onclick="showModes()">Bắt đầu chơi</button>
-                <button class="btn" onclick="alert('Trò chơi đố vui hack não! Xáo trộn câu hỏi ngẫu nhiên và hiển thị màu sắc tổng kết.')">Hướng dẫn</button>
-                <button class="btn" onclick="alert('Phiên bản v1.3 - Xáo trộn câu hỏi và tối ưu màu sắc kết quả!')">Cài đặt</button>
+                <button class="btn" onclick="alert('Trò chơi đố vui hack não! Số lượt gợi ý giới hạn bằng một nửa số câu hỏi.')">Hướng dẫn</button>
+                <button class="btn" onclick="alert('Phiên bản v1.4 - Giới hạn gợi ý & hiệu ứng cảnh báo hết lượt!')">Cài đặt</button>
             </div>
         </div>
 
@@ -191,7 +208,7 @@
             
             <div class="menu-buttons">
                 <button class="btn" onclick="checkAnswer()">Trả lời</button>
-                <button class="btn btn-hint" id="hint-btn" onclick="nextHint()">Xem gợi ý (Lượt 1)</button>
+                <button class="btn btn-hint" id="hint-btn" onclick="useHint()">Xem gợi ý</button>
                 <button class="btn btn-back" onclick="showModes()">Chọn chế độ khác</button>
             </div>
         </div>
@@ -236,9 +253,8 @@
         let score = 0;
         let currentQuestions = [];
         let historyLog = [];
-        let hintStep = 0;
+        let hintsLeft = 0; // Số lượt gợi ý còn lại trong màn chơi
 
-        // Hàm xáo trộn mảng ngẫu nhiên (Fisher-Yates shuffle)
         function shuffleArray(array) {
             let arr = [...array];
             for (let i = arr.length - 1; i > 0; i--) {
@@ -267,9 +283,10 @@
             currentIndex = 0;
             score = 0;
             historyLog = [];
-            
-            // Xáo trộn câu hỏi mỗi khi bắt đầu chơi lại màn
             currentQuestions = shuffleArray(questionsData[mode]);
+            
+            // Số lượt gợi ý = số câu hỏi chia đôi (làm tròn xuống)
+            hintsLeft = Math.floor(currentQuestions.length / 2);
 
             document.getElementById('mode-menu').classList.add('hidden');
             document.getElementById('summary-screen').classList.add('hidden');
@@ -283,35 +300,38 @@
             if (currentIndex < currentQuestions.length) {
                 let qObj = currentQuestions[currentIndex];
                 document.getElementById('question-text').innerText = (currentIndex + 1) + ". " + qObj.q;
-                document.getElementById('score-text').innerText = `Câu: ${currentIndex + 1}/${currentQuestions.length} | Điểm: ${score}`;
+                document.getElementById('score-text').innerText = `Câu: ${currentIndex + 1}/${currentQuestions.length} | Điểm: ${score} | Gợi ý còn lại: ${hintsLeft}`;
                 document.getElementById('user-answer').value = '';
                 
-                hintStep = 0;
                 let hintBox = document.getElementById('hint-text');
                 hintBox.style.display = 'none';
                 hintBox.innerText = "";
-                document.getElementById('hint-btn').innerText = "Xem gợi ý (Lượt 1)";
-                document.getElementById('hint-btn').style.display = "block";
             } else {
                 showSummary();
             }
         }
 
-        function nextHint() {
+        function useHint() {
             let qObj = currentQuestions[currentIndex];
             let hintBox = document.getElementById('hint-text');
-            let hintBtn = document.getElementById('hint-btn');
 
-            if (hintStep === 0) {
+            if (hintsLeft > 0) {
+                hintsLeft--;
+                let hintContent = qObj.hints.join("<br>💡 ");
                 hintBox.style.display = 'block';
-                hintBox.innerText = "💡 " + qObj.hints[0];
-                hintStep = 1;
-                hintBtn.innerText = "Xem gợi ý (Lượt 2)";
-            } else if (hintStep === 1) {
-                hintBox.innerText = "💡 " + qObj.hints[0] + "\n💡 " + qObj.hints[1];
-                hintStep = 2;
-                hintBtn.innerText = "Đã hết lượt gợi ý";
-                hintBtn.style.display = "none";
+                hintBox.innerHTML = "💡 " + hintContent;
+                document.getElementById('score-text').innerText = `Câu: ${currentIndex + 1}/${currentQuestions.length} | Điểm: ${score} | Gợi ý còn lại: ${hintsLeft}`;
+            } else {
+                // Hết lượt: Hiệu ứng rung ngang và chuyển màu đỏ trong 3 giây
+                hintBox.style.display = 'block';
+                hintBox.innerHTML = "⚠️ Bạn đã dùng hết lượt gợi ý trong màn này rồi!";
+                hintBox.classList.add('shake-warning');
+
+                setTimeout(() => {
+                    hintBox.classList.remove('shake-warning');
+                    hintBox.style.display = 'none';
+                    hintBox.innerHTML = "";
+                }, 3000);
             }
         }
 
