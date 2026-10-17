@@ -13,24 +13,24 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            /* Tone nền chuyển sắc pastel dịu nhẹ (Xanh dương - Tím nhạt - Hồng phấn) */
-            background: linear-gradient(135deg, #a1c4fd, #c2e9fb, #fbc8d4);
+            /* Tone nền tím pastel tối, trầm, ấm và cực kỳ dịu mắt */
+            background: linear-gradient(135deg, #2d2342, #3b2e59, #4f3a65);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: #4a4a4a;
+            color: #e2e8f0;
             padding: 20px;
         }
 
         .menu-container {
             text-align: center;
-            background: rgba(255, 255, 255, 0.65);
+            background: rgba(45, 35, 66, 0.75);
             padding: 30px 40px;
             border-radius: 20px;
             backdrop-filter: blur(12px);
-            box-shadow: 0 8px 32px 0 rgba(100, 116, 139, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 32px 0 rgba(15, 10, 25, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             width: 450px;
             position: relative;
         }
@@ -39,9 +39,9 @@
             position: absolute;
             top: 15px;
             right: 20px;
-            background: rgba(255, 255, 255, 0.8);
-            border: 1px solid #e2e8f0;
-            color: #64748b;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #cbd5e1;
             padding: 5px 12px;
             border-radius: 15px;
             cursor: pointer;
@@ -50,22 +50,22 @@
         }
 
         .music-toggle:hover {
-            background: rgba(255, 255, 255, 1);
-            color: #334155;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
         }
 
         h1 {
             font-size: 2.2rem;
             margin-bottom: 5px;
-            color: #475569;
-            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+            color: #f1f5f9;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
         }
 
         .subtitle {
             font-size: 1.1rem;
             font-style: italic;
             margin-bottom: 20px;
-            color: #94a3b8;
+            color: #fbbf24; /* Vàng pastel dịu */
         }
 
         .menu-buttons {
@@ -75,7 +75,7 @@
         }
 
         .btn {
-            background-color: #b48efa; /* Tím pastel dịu */
+            background-color: #8b5cf6; /* Tím pastel trung tính */
             color: white;
             border: none;
             padding: 12px 20px;
@@ -84,42 +84,41 @@
             border-radius: 25px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(180, 142, 250, 0.3);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
             width: 100%;
         }
 
         .btn:hover {
-            background-color: #a275f4;
+            background-color: #7c3aed;
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(180, 142, 250, 0.4);
+            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
         }
 
         .btn-hint {
-            background-color: #fef08a; /* Vàng kem pastel */
-            color: #713f12;
-            box-shadow: 0 4px 12px rgba(254, 240, 138, 0.4);
+            background-color: #f59e0b; /* Vàng cam pastel ấm */
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
         }
         .btn-hint:hover {
-            background-color: #fde047;
+            background-color: #d97706;
         }
 
         .btn-skip {
-            background-color: #fdbca7; /* Hồng cam pastel */
-            color: #7c2d12;
-            box-shadow: 0 4px 12px rgba(253, 188, 167, 0.4);
+            background-color: #f43f5e; /* Hồng đào pastel đầm */
+            color: white;
+            box-shadow: 0 4px 12px rgba(244, 63, 94, 0.25);
         }
         .btn-skip:hover {
-            background-color: #fb923c;
-            color: white;
+            background-color: #e11d48;
         }
 
         .btn-back {
-            background-color: #cbd5e1; /* Xám trắng pastel */
-            color: #475569;
-            box-shadow: 0 4px 12px rgba(203, 213, 225, 0.3);
+            background-color: #38bdf8; /* Xanh dương pastel dịu */
+            color: #0f172a;
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
         }
         .btn-back:hover {
-            background-color: #94a3b8;
+            background-color: #0ea5e9;
             color: white;
         }
 
@@ -128,24 +127,24 @@
             margin-bottom: 15px;
             line-height: 1.5;
             text-align: left;
-            background: rgba(255, 255, 255, 0.7);
-            color: #334155;
+            background: rgba(255, 255, 255, 0.08);
+            color: #f8fafc;
             padding: 15px;
             border-radius: 12px;
-            border: 1px solid rgba(226, 232, 240, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .hint-box {
             font-size: 0.95rem;
-            color: #854d0e;
+            color: #fef08a;
             margin-bottom: 15px;
             font-style: italic;
             display: none;
             text-align: left;
-            background: rgba(254, 240, 138, 0.4);
+            background: rgba(245, 158, 11, 0.15);
             padding: 10px 12px;
             border-radius: 10px;
-            border: 1px solid #fef08a;
+            border: 1px solid rgba(245, 158, 11, 0.3);
             transition: background-color 0.3s ease;
         }
 
@@ -160,9 +159,9 @@
 
         .shake-warning {
             animation: shake 0.4s ease;
-            background-color: rgba(248, 113, 113, 0.3) !important;
-            color: #991b1b !important;
-            border-color: #fca5a5 !important;
+            background-color: rgba(239, 68, 68, 0.25) !important;
+            color: #fca5a5 !important;
+            border-color: #ef4444 !important;
         }
 
         .answer-input {
@@ -170,22 +169,26 @@
             padding: 11px 15px;
             font-size: 1rem;
             border-radius: 20px;
-            border: 1px solid #cbd5e1;
-            background: rgba(255, 255, 255, 0.9);
-            color: #334155;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(15, 10, 25, 0.5);
+            color: #ffffff;
             margin-bottom: 15px;
             outline: none;
             transition: border-color 0.3s;
         }
 
+        .answer-input::placeholder {
+            color: #94a3b8;
+        }
+
         .answer-input:focus {
-            border-color: #b48efa;
+            border-color: #8b5cf6;
         }
 
         .score-board {
             font-size: 0.95rem;
             margin-bottom: 15px;
-            color: #64748b;
+            color: #cbd5e1;
             font-weight: 500;
         }
 
@@ -193,23 +196,23 @@
             text-align: left;
             max-height: 230px;
             overflow-y: auto;
-            background: rgba(255, 255, 255, 0.6);
+            background: rgba(15, 10, 25, 0.4);
             padding: 15px;
             border-radius: 12px;
             margin-bottom: 15px;
             font-size: 0.95rem;
-            border: 1px solid rgba(226, 232, 240, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .result-item {
             margin-bottom: 10px;
             padding-bottom: 8px;
-            border-bottom: 1px solid rgba(226, 232, 240, 0.6);
-            color: #334155;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            color: #e2e8f0;
         }
 
-        .correct-text { color: #10b981; font-weight: bold; } /* Xanh lá pastel đậm vừa */
-        .wrong-text { color: #ef4444; font-weight: bold; }   /* Đỏ pastel dịu */
+        .correct-text { color: #34d399; font-weight: bold; } /* Xanh lá pastel dịu */
+        .wrong-text { color: #f87171; font-weight: bold; }   /* Đỏ hồng pastel dịu */
 
         .hidden {
             display: none;
@@ -235,8 +238,8 @@
             
             <div class="menu-buttons">
                 <button class="btn" onclick="showModes()">Bắt đầu chơi</button>
-                <button class="btn" onclick="alert('Trò chơi đố vui hack não với giao diện Pastel dịu mắt!')">Hướng dẫn</button>
-                <button class="btn" onclick="alert('Phiên bản v1.8 - Giao diện Tone Pastel Xanh, Tím, Hồng, Trắng, Vàng nhẹ nhàng!')">Cài đặt</button>
+                <button class="btn btn-hint" onclick="alert('Trò chơi đố vui hack não với giao diện Tím Pastel dịu mắt, chống chói!')">Hướng dẫn</button>
+                <button class="btn btn-back" onclick="alert('Phiên bản v1.9 - Tone màu Tím tối pastel nhẹ nhàng, phối nút xanh, tím, vàng, hồng!')">Cài đặt</button>
             </div>
         </div>
 
@@ -247,9 +250,9 @@
             
             <div class="menu-buttons">
                 <button class="btn" onclick="startGame('EASY')">EASY (Dễ)</button>
-                <button class="btn" onclick="startGame('MID')">MID (Trung bình)</button>
-                <button class="btn" onclick="startGame('HARD')">HARD (Khó)</button>
-                <button class="btn btn-back" onclick="showModes()">Quay lại</button>
+                <button class="btn btn-hint" onclick="startGame('MID')">MID (Trung bình)</button>
+                <button class="btn btn-skip" onclick="startGame('HARD')">HARD (Khó)</button>
+                <button class="btn btn-back" onclick="showMain()">Quay lại</button>
             </div>
         </div>
 
@@ -504,7 +507,7 @@
                     listHTML += `<div class="result-item">
                         <strong>C. ${index + 1}:</strong> ${item.question}<br>
                         - Đáp án của bạn: <span class="wrong-text">${item.userAns} (Sai)</span><br>
-                        - Đáp án chuẩn: <span style="color: #d97706;">${item.standardAns}</span>
+                        - Đáp án chuẩn: <span style="color: #fbbf24;">${item.standardAns}</span>
                     </div>`;
                 }
             });
