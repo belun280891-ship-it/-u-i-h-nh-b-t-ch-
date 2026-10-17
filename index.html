@@ -31,6 +31,26 @@
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
             border: 1px solid rgba(255, 255, 255, 0.18);
             width: 450px;
+            position: relative;
+        }
+
+        /* Nút bật/tắt nhạc nền góc trên */
+        .music-toggle {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background 0.3s;
+        }
+
+        .music-toggle:hover {
+            background: rgba(255, 255, 255, 0.4);
         }
 
         h1 {
@@ -110,7 +130,6 @@
             transition: background-color 0.3s ease;
         }
 
-        /* Hiệu ứng rung ngang và đổi màu đỏ khi hết lượt gợi ý */
         @keyframes shake {
             0% { transform: translateX(0); }
             20% { transform: translateX(-8px); }
@@ -169,7 +188,16 @@
 </head>
 <body>
 
+    <!-- Thẻ âm thanh chạy nhạc nền tự động lặp lại -->
+    <audio id="bg-music" loop>
+        <source src="Themesound.mp4" type="audio/mp4">
+        Trình duyệt của bạn không hỗ trợ thẻ audio.
+    </audio>
+
     <div class="menu-container">
+        <!-- Nút điều khiển nhạc -->
+        <button class="music-toggle" id="music-btn" onclick="toggleMusic()">🔊 Nhạc: Bật</button>
+
         <!-- MÀN HÌNH MENU CHÍNH -->
         <div id="main-menu">
             <h1>Game đố vui</h1>
@@ -177,8 +205,8 @@
             
             <div class="menu-buttons">
                 <button class="btn" onclick="showModes()">Bắt đầu chơi</button>
-                <button class="btn" onclick="alert('Trò chơi đố vui hack não! Số lượt gợi ý giới hạn bằng một nửa số câu hỏi.')">Hướng dẫn</button>
-                <button class="btn" onclick="alert('Phiên bản v1.4 - Giới hạn gợi ý & hiệu ứng cảnh báo hết lượt!')">Cài đặt</button>
+                <button class="btn" onclick="alert('Trò chơi đố vui hack não! Có nhạc nền và giới hạn gợi ý thông minh.')">Hướng dẫn</button>
+                <button class="btn" onclick="alert('Phiên bản v1.5 - Tích hợp nhạc nền Themesound.mp4!')">Cài đặt</button>
             </div>
         </div>
 
@@ -198,7 +226,7 @@
         <!-- MÀN HÌNH CHƠI GAME -->
         <div id="game-screen" class="hidden">
             <h1 id="mode-title" style="font-size: 1.6rem;">Chế độ</h1>
-            <div class="score-board" id="score-text">Câu: 1/4 | Điểm: 0</div>
+            <div class="score-board" id="score-text">Câu: 1/4 | Điểm: 0 | Gợi ý còn lại: 2</div>
             
             <div class="question-box" id="question-text">Nội dung câu hỏi ở đây...</div>
             
@@ -253,7 +281,33 @@
         let score = 0;
         let currentQuestions = [];
         let historyLog = [];
-        let hintsLeft = 0; // Số lượt gợi ý còn lại trong màn chơi
+        let hintsLeft = 0;
+        let isMusicPlaying = false;
+
+        // Tự động phát nhạc khi người chơi tương tác lần đầu trên trang
+        document.addEventListener('click', function() {
+            let music = document.getElementById('bg-music');
+            if (!isMusicPlaying && music.paused) {
+                music.play().then(() => {
+                    isMusicPlaying = true;
+                    document.getElementById('music-btn').innerText = "🔊 Nhạc: Bật";
+                }).catch(e => console.log("Autoplay blocked"));
+            }
+        }, { once: true });
+
+        function toggleMusic() {
+            let music = document.getElementById('bg-music');
+            let btn = document.getElementById('music-btn');
+            if (music.paused) {
+                music.play();
+                btn.innerText = "🔊 Nhạc: Bật";
+                isMusicPlaying = true;
+            } else {
+                music.pause();
+                btn.innerText = "🔇 Nhạc: Tắt";
+                isMusicPlaying = false;
+            }
+        }
 
         function shuffleArray(array) {
             let arr = [...array];
@@ -284,8 +338,6 @@
             score = 0;
             historyLog = [];
             currentQuestions = shuffleArray(questionsData[mode]);
-            
-            // Số lượt gợi ý = số câu hỏi chia đôi (làm tròn xuống)
             hintsLeft = Math.floor(currentQuestions.length / 2);
 
             document.getElementById('mode-menu').classList.add('hidden');
@@ -322,7 +374,6 @@
                 hintBox.innerHTML = "💡 " + hintContent;
                 document.getElementById('score-text').innerText = `Câu: ${currentIndex + 1}/${currentQuestions.length} | Điểm: ${score} | Gợi ý còn lại: ${hintsLeft}`;
             } else {
-                // Hết lượt: Hiệu ứng rung ngang và chuyển màu đỏ trong 3 giây
                 hintBox.style.display = 'block';
                 hintBox.innerHTML = "⚠️ Bạn đã dùng hết lượt gợi ý trong màn này rồi!";
                 hintBox.classList.add('shake-warning');
